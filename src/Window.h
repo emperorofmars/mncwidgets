@@ -39,7 +39,7 @@ public:
 
 	void getPosition(int &x, int &y);
 	void getSize(int &h, int &w);
-	int setColor(char colorF, char colorB);
+	int setColor(int colorPair);
 
 	int addLabel(Label *label);
 	//int addTextBox(TextBox *textBox);
@@ -56,6 +56,8 @@ public:
 	//Button *getButton(const char id);
 	//ProgressBar *getProgressBar(const char *id);
 	Window *getWindow(const char *id);
+
+	bool cmpID(const char *id);
 
 private:
 	static int initNC(Window *win);
@@ -75,10 +77,9 @@ private:
 	elements mElements;
 
 	WINDOW *mWindow;
-	WINDOW *tmpW;
 	std::string mID;
 	int mX, mY, mW, mH;
-	int mColorF, mColorB;
+	int mColorPair;
 
 	static bool mNCInited;
 	static int mInstances;

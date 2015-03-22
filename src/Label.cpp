@@ -17,71 +17,131 @@
 
 namespace mncw{
 
-Label::Label(const char *id){
-}
+Label::Label(const char *id, const char *content, int x, int y, int len){
+	if(!id){
+		return;
+	}
+	mID = id;
+	if(content){
+		mContent = content;
+	}
+	mX = x;
+	mY = y;
+	mLen = len;
+	mColorPair = 0;
+	mChanged = true;
+	mVisible = true;
 
-Label::Label(WINDOW *target, const char *id){
-}
-
-Label::Label(const char *content, int colorF, int colorB, WINDOW *target, const char *id){
+	LOG_F_TRACE(MNCW_LOG_FILE, "Label created: ", mID, " len: ", mLen, " content: ", mContent);
 }
 
 Label::~Label(){
 }
 
-int Label::refreshAll(){
-	return -1;
+int Label::updateAll(){
+	if(!mTarget){
+		return -1;
+	}
+	if(!mChanged || !mVisible){
+		return -1;
+	}
+	int tmpLen = mContent.size() - 1;
+	if(tmpLen <= 0){
+		return -1;
+	}
+	else if(tmpLen > mLen) tmpLen = mLen;
+
+	if(has_colors()){
+		if(mColorPair > 0) color_set(mColorPair, 0);
+	}
+	mvwaddstr(mTarget, mY, mX, mContent.substr(0, tmpLen).c_str());
+
+	mChanged = false;
+	return 0;
 }
 
 int Label::clearAll(){
-	return -1;
+	if(!mTarget){
+		return -1;
+	}
+	std::string clr(mLen, ' ');
+	waddstr(mTarget, clr.c_str());
+	return 0;
 }
 
 int Label::setTarget(WINDOW *target){
-	return -1;
+	if(!mTarget){
+		return -1;
+	}
+	mTarget = target;
+	mChanged = true;
+	return 0;
 }
 
 int Label::setText(const char *text){
-	return -1;
+	if(!mTarget){
+		return -1;
+	}
+	mContent = text;
+	mChanged = true;
+	return 0;
 }
 
 int Label::setPosition(int x, int y){
-	return -1;
+	mX = x;
+	mY = y;
+	mChanged = true;
+	return 0;
 }
 
 int Label::setMaxSize(int s){
-	return -1;
+	mLen = s;
+	mChanged = true;
+	return 0;
 }
 
-int Label::setColor(char colorF, char colorB){
-	return -1;
+int Label::setColor(int colorPair){
+	mColorPair = colorPair;
+	mChanged = true;
+	return 0;
 }
 
 int Label::setVisible(bool visible){
-	return -1;
+	if(mVisible && !visible){
+		clearAll();
+	}
+	else if(!mVisible && visible){
+		mChanged = true;
+	}
+	mVisible = visible;
+	return 0;
 }
 
 std::string Label::getText(){
-	return "ERROR";
+	return mContent;
 }
 
 std::string Label::getID(){
-	return "ERROR";
+	return mID;
 }
 
 void Label::getPosition(int &x, int &y){
+	x = mX;
+	y = mY;
 	return;
 }
 
 int Label::getMaxSize(){
-	return -1;
+	return mLen;
 }
 
 bool Label::getVisible(){
-	return false;
+	return mVisible;
 }
 
 bool Label::cmpID(const char *id){
+	if(!id) return false;
+	if(std::string(id) == mID) return true;
 	return false;
 }
 

@@ -39,11 +39,19 @@ Window::Window(const char *id, int x, int y, int h, int w, WINDOW *parent){
 		mW = w;
 		mH = h;
 	}
+	mColorPair = 0;
+
 	mInstances++;
 	LOG_F_TRACE(MNCW_LOG_FILE, "Window created: ", mID);
 }
 
 Window::~Window(){
+	if(mWindow){
+		for(unsigned int i = 0; i < mElements.mWindows.size(); i++){
+			mElements.mWindows.erase(mElements.mWindows.begin() + i);
+			i--;
+		}
+	}
 	mInstances--;
 	if(mNCInited && mInstances <= 0){
 		closeNC(this);
@@ -60,7 +68,7 @@ Window::~Window(){
 
 int Window::refreshAll(){
 	updateAll();
-	doupdate();
+	refresh();
 	return 0;
 }
 
@@ -70,10 +78,10 @@ int Window::updateAll(){
 	}
 	wnoutrefresh(mWindow);
 	for(unsigned int i = 0; i < mElements.mWindows.size(); i++){
-		mElements.mWindows[i]->refreshAll();
+		mElements.mWindows[i]->updateAll();
 	}
 	for(unsigned int i = 0; i < mElements.mLabels.size(); i++){
-		mElements.mLabels[i]->refreshAll();
+		mElements.mLabels[i]->updateAll();
 	}
 	return 0;
 }
@@ -100,7 +108,9 @@ int Window::setPosition(int x, int y){
 		LOG_F_WARNING(MNCW_LOG_FILE, "cannot set position of stdscr: ", mID);
 		return -1;
 	}
-	//do stuff
+	mX = x;
+	mY = y;
+	wmove(mWindow, y, x);
 	return 0;
 }
 
@@ -122,18 +132,17 @@ int Window::setSize(int h, int w){
 	return 0;
 }
 
-int Window::setColor(char colorF, char colorB){
+int Window::setColor(int colorPair){
 	if(!mWindow){
 		return -1;
 	}
 	if(!has_colors()){
+		LOG_F_WARNING(MNCW_LOG_FILE, "no colors supported: ", mID);
 		return -1;
 	}
-	mColorB = colorB;
-	mColorF = colorF;
-	init_pair(1, mColorF, mColorB);
-	color_set(1, 0);
-	wbkgd(mWindow, COLOR_PAIR(1));
+	mColorPair = colorPair;
+	wbkgd(mWindow, COLOR_PAIR(colorPair));
+	LOG_F_WARNING(MNCW_LOG_FILE, "color pair set: ", mID, " pair: ", colorPair);
 	return 0;
 }
 
@@ -157,6 +166,7 @@ int Window::addLabel(Label *label){
 		LOG_F_WARNING(MNCW_LOG_FILE, "cannot add label: (label is null): ", mID);
 		return -1;
 	}
+	label->setTarget(mWindow);
 	mElements.mLabels.push_back(std::shared_ptr<Label>(label));
 	return 0;
 }
@@ -200,7 +210,19 @@ Label *Window::getLabel(const char *id){
 //ProgressBar *Window::getProgressBar(const char *id);
 
 Window *Window::getWindow(const char *id){
+	if(!mWindow){
+		return NULL;
+	}
+	for(unsigned int i = 0; i < mElements.mWindows.size(); i++){
+		if(mElements.mWindows[i] && mElements.mWindows[i]->cmpID(id)) return mElements.mWindows[i].get();
+	}
 	return NULL;
+}
+
+bool Window::cmpID(const char *id){
+	if(!id) return false;
+	if(std::string(id) == mID) return true;
+	return false;
 }
 
 int Window::initNC(Window *win){
@@ -220,6 +242,9 @@ int Window::initNC(Window *win){
 	keypad(win->mWindow, TRUE);
 	curs_set(0);
 	noecho();
+	if(has_colors()) start_color();
+	else LOG_F_INFO(MNCW_LOG_FILE, "Colors not supported!");
+	clear();
 
 	mNCInited = true;
 	LOG_F_INFO(MNCW_LOG_FILE, "NCurses inited");
@@ -238,8 +263,6 @@ int Window::closeNC(Window *win){
 	nocbreak();
 	echo();
 	endwin();
-	if(has_colors()) start_color();
-	else LOG_F_INFO(MNCW_LOG_FILE, "Colors not supported!");
 
 	mNCInited = false;
 	LOG_F_INFO(MNCW_LOG_FILE, "NCurses closed");

@@ -20,15 +20,23 @@
 
 int main(){
 	LOG_INIT("log.txt", false);
-	//mncw::Window win("root", 2, 3, 4, 5, NULL);
+
 	mncw::Window win("root");
-	LOG_F_ERROR(MNCW_LOG_FILE, "INITED!");
 	win.setSize(5, 5);
-	LOG_F_ERROR(MNCW_LOG_FILE, "SET SIZE!");
-	win.setColor(COLOR_BLUE, COLOR_YELLOW);
+
+	init_pair(1, COLOR_WHITE, COLOR_BLUE);
+	init_pair(2, COLOR_BLACK, COLOR_WHITE);
+
+	win.setColor(1);
+
+	win.addLabel(new mncw::Label("label1", "MNCWIDGETS", 20, 3, 5));
+
+	win.addWindow(new mncw::Window("sub", 10, 6));
+	mncw::Window *tmp = win.getWindow("sub");
+	if(tmp != NULL) tmp->setColor(2);
+	else LOG_F_ERROR(MNCW_LOG_FILE, "GET WINDOW RETURNED NULL");
+
 	win.refreshAll();
-	LOG_F_ERROR(MNCW_LOG_FILE, "SET COLOR!");
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-	LOG_F_ERROR(MNCW_LOG_FILE, "EXIT!");
 	return 0;
 }
