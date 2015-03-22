@@ -53,6 +53,10 @@ int Label::setMaxSize(int s){
 	return -1;
 }
 
+int Label::setColor(char colorF, char colorB){
+	return -1;
+}
+
 int Label::setVisible(bool visible){
 	return -1;
 }
@@ -77,7 +81,7 @@ bool Label::getVisible(){
 	return false;
 }
 
-bool Label::cmpID(std::string &id){
+bool Label::cmpID(const char *id){
 	return false;
 }
 

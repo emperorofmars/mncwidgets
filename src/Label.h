@@ -34,6 +34,7 @@ public:
 	int setText(const char *text);
 	int setPosition(int x, int y);
 	int setMaxSize(int s);
+	int setColor(char colorF, char colorB);
 	int setVisible(bool visible);
 
 	std::string getText();
@@ -42,7 +43,7 @@ public:
 	int getMaxSize();
 	bool getVisible();
 
-	bool cmpID(std::string &id);
+	bool cmpID(const char *id);
 
 private:
 	std::string mID;

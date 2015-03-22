@@ -20,11 +20,24 @@ namespace mncw{
 bool Window::mNCInited = false;
 int Window::mInstances = 0;
 
-Window::Window(const char *id){
+Window::Window(const char *id, int x, int y, int h, int w, WINDOW *parent){
 	mWindow = NULL;
 	if(id != NULL) mID = id;
 	if(!mNCInited){
 		initNC(this);
+	}
+	else{
+		LOG_F_ERROR(MNCW_LOG_FILE, "NEW WIN", mID);
+		if(!parent)	mWindow = newwin(h, w, y, x);
+		else mWindow = derwin(parent, h, w, y, x);
+		if(mWindow == NULL){
+			LOG_F_ERROR(MNCW_LOG_FILE, "Window creation failed: ", mID);
+			return;
+		}
+		mX = x;
+		mY = y;
+		mW = w;
+		mH = h;
 	}
 	mInstances++;
 	LOG_F_TRACE(MNCW_LOG_FILE, "Window created: ", mID);
@@ -35,11 +48,27 @@ Window::~Window(){
 	if(mNCInited && mInstances <= 0){
 		closeNC(this);
 	}
+	else{
+		if(mWindow){
+			delwin(mWindow);
+			mWindow = NULL;
+		}
+		else LOG_F_ERROR(MNCW_LOG_FILE, "Window destruction failed (not created): ", mID);
+	}
 	LOG_F_TRACE(MNCW_LOG_FILE, "Window destroyed: ", mID);
 }
 
 int Window::refreshAll(){
-	refresh();
+	updateAll();
+	doupdate();
+	return 0;
+}
+
+int Window::updateAll(){
+	if(!mWindow){
+		return -1;
+	}
+	wnoutrefresh(mWindow);
 	for(unsigned int i = 0; i < mElements.mWindows.size(); i++){
 		mElements.mWindows[i]->refreshAll();
 	}
@@ -50,7 +79,10 @@ int Window::refreshAll(){
 }
 
 int Window::clearAll(){
-	clear();
+	if(!mWindow){
+		return -1;
+	}
+	wclear(mWindow);
 	for(unsigned int i = 0; i < mElements.mWindows.size(); i++){
 		mElements.mWindows[i]->clearAll();
 	}
@@ -61,20 +93,47 @@ int Window::clearAll(){
 }
 
 int Window::setPosition(int x, int y){
+	if(!mWindow){
+		return -1;
+	}
 	if(mWindow == stdscr){
-		LOG_F_WARNING(MNCW_LOG_FILE, "cannot move stdscr: ", mID);
+		LOG_F_WARNING(MNCW_LOG_FILE, "cannot set position of stdscr: ", mID);
 		return -1;
 	}
 	//do stuff
 	return 0;
 }
 
-int Window::setSize(int x, int y){
-	if(mWindow == stdscr){
-		LOG_F_WARNING(MNCW_LOG_FILE, "cannot move stdscr: ", mID);
+int Window::setSize(int h, int w){
+	if(!mWindow){
 		return -1;
 	}
-	//do stuff
+	if(mWindow == stdscr){
+		LOG_F_WARNING(MNCW_LOG_FILE, "cannot resize stdscr: ", mID);
+		return -1;
+	}
+	if(h <= 0 || w <= 0){
+		LOG_F_WARNING(MNCW_LOG_FILE, "cannot resize window (new size too small): ", mID);
+		return -1;
+	}
+	mH = h;
+	mW = w;
+	wresize(mWindow, h, w);
+	return 0;
+}
+
+int Window::setColor(char colorF, char colorB){
+	if(!mWindow){
+		return -1;
+	}
+	if(!has_colors()){
+		return -1;
+	}
+	mColorB = colorB;
+	mColorF = colorF;
+	init_pair(1, mColorF, mColorB);
+	color_set(1, 0);
+	wbkgd(mWindow, COLOR_PAIR(1));
 	return 0;
 }
 
@@ -84,14 +143,22 @@ void Window::getPosition(int &x, int &y){
 	return;
 }
 
-void Window::getSize(int &w, int &h){
-	w = mW;
+void Window::getSize(int &h, int &w){
 	h = mH;
+	w = mW;
 	return;
 }
 
 int Window::addLabel(Label *label){
-	return -1;
+	if(!mWindow){
+		return -1;
+	}
+	if(!label){
+		LOG_F_WARNING(MNCW_LOG_FILE, "cannot add label: (label is null): ", mID);
+		return -1;
+	}
+	mElements.mLabels.push_back(std::shared_ptr<Label>(label));
+	return 0;
 }
 
 //int Window::addTextBox(TextBox *textBox);
@@ -101,10 +168,28 @@ int Window::addLabel(Label *label){
 //int Window::addProgressBar(ProgressBar *progressBar);
 
 int Window::addWindow(Window *window){
-	return -1;
+	if(!mWindow){
+		return -1;
+	}
+	if(!window){
+		LOG_F_WARNING(MNCW_LOG_FILE, "cannot add window: (window is null): ", mID);
+		return -1;
+	}
+	if(window->mWindow == stdscr){
+		LOG_F_WARNING(MNCW_LOG_FILE, "cannot add stdscr to another window: ", mID);
+		return -1;
+	}
+	mElements.mWindows.push_back(std::shared_ptr<Window>(window));
+	return 0;
 }
 
 Label *Window::getLabel(const char *id){
+	if(!mWindow){
+		return NULL;
+	}
+	for(unsigned int i = 0; i < mElements.mLabels.size(); i++){
+		if(mElements.mLabels[i] && mElements.mLabels[i]->cmpID(id)) return mElements.mLabels[i].get();
+	}
 	return NULL;
 }
 
@@ -146,7 +231,6 @@ int Window::closeNC(Window *win){
 		LOG_F_ERROR(MNCW_LOG_FILE, "Failed to close NCurses! (window is null)");
 		return -1;
 	}
-
 	if(!mNCInited){
 		LOG_F_ERROR(MNCW_LOG_FILE, "Failed to close NCurses! (not inited)");
 		return -1;
@@ -154,6 +238,8 @@ int Window::closeNC(Window *win){
 	nocbreak();
 	echo();
 	endwin();
+	if(has_colors()) start_color();
+	else LOG_F_INFO(MNCW_LOG_FILE, "Colors not supported!");
 
 	mNCInited = false;
 	LOG_F_INFO(MNCW_LOG_FILE, "NCurses closed");

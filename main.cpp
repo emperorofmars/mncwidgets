@@ -20,8 +20,15 @@
 
 int main(){
 	LOG_INIT("log.txt", false);
-    mncw::Window win("root");
-    win.setPosition(5, 5);
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-    return 0;
+	//mncw::Window win("root", 2, 3, 4, 5, NULL);
+	mncw::Window win("root");
+	LOG_F_ERROR(MNCW_LOG_FILE, "INITED!");
+	win.setSize(5, 5);
+	LOG_F_ERROR(MNCW_LOG_FILE, "SET SIZE!");
+	win.setColor(COLOR_BLUE, COLOR_YELLOW);
+	win.refreshAll();
+	LOG_F_ERROR(MNCW_LOG_FILE, "SET COLOR!");
+	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+	LOG_F_ERROR(MNCW_LOG_FILE, "EXIT!");
+	return 0;
 }

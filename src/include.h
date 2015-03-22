@@ -33,5 +33,12 @@
 
 #define MNCW_LOG_FILE "mncwidgets_log.txt"
 
+#define TESTSTDSCR \
+	if(mWindow == stdscr) {LOG_F_ERROR(MNCW_LOG_FILE, "IS STDSCR ", mID);} \
+	else {LOG_F_ERROR(MNCW_LOG_FILE, "NOT STDSCR: ", mID);} \
+	LOG_F_ERROR(MNCW_LOG_FILE, "window id: ", mID, " window ptr: ", mWindow); \
+	LOG_F_ERROR(MNCW_LOG_FILE, "window id: ", mID, " stdscr ptr: ", stdscr); \
+	LOG_F_ERROR(MNCW_LOG_FILE, "window id: ", mID, " tmpW ptr:   ", tmpW);
+
 #endif // MNCWIDGETS_INCLUDE
 

@@ -28,17 +28,18 @@ namespace mncw{
 
 class Window{
 public:
-	Window(const char *id);
+	Window(const char *id, int x = 0, int y = 0, int h = 6, int w = 20, WINDOW *parent = NULL);
 	~Window();
 
 	int refreshAll();
 	int clearAll();
 
 	int setPosition(int x, int y);
-	int setSize(int x, int y);
+	int setSize(int h, int w);
 
 	void getPosition(int &x, int &y);
-	void getSize(int &w, int &h);
+	void getSize(int &h, int &w);
+	int setColor(char colorF, char colorB);
 
 	int addLabel(Label *label);
 	//int addTextBox(TextBox *textBox);
@@ -60,6 +61,8 @@ private:
 	static int initNC(Window *win);
 	static int closeNC(Window *win);
 
+	int updateAll();
+
 	struct elements{
 		std::vector<std::shared_ptr<Label>> mLabels;
 		//std::vector<std::shared_ptr<TextBox>> mTextBox;
@@ -72,8 +75,10 @@ private:
 	elements mElements;
 
 	WINDOW *mWindow;
+	WINDOW *tmpW;
 	std::string mID;
 	int mX, mY, mW, mH;
+	int mColorF, mColorB;
 
 	static bool mNCInited;
 	static int mInstances;
