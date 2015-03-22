@@ -14,9 +14,14 @@
 */
 
 #include <iostream>
+#include <thread>
+#include <chrono>
 #include "src/mNCWidgets.h"
 
 int main(){
-    std::cout << "Hello world!" << std::endl;
+	LOG_INIT("log.txt", false);
+    mncw::Window win("root");
+    win.setPosition(5, 5);
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     return 0;
 }

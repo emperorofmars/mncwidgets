@@ -31,7 +31,7 @@
 #define MLOG_DISABLE_CONSOLE_LOG 0
 #define MLOG_DISABLE_FILE_LOG 0
 
-#define MAUDIO_LOG_FILE "mncwidgets_log.txt"
+#define MNCW_LOG_FILE "mncwidgets_log.txt"
 
 #endif // MNCWIDGETS_INCLUDE
 

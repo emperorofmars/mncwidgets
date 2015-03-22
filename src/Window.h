@@ -28,11 +28,17 @@ namespace mncw{
 
 class Window{
 public:
-	Window();
+	Window(const char *id);
 	~Window();
 
-	int refresh();
-	int clear();
+	int refreshAll();
+	int clearAll();
+
+	int setPosition(int x, int y);
+	int setSize(int x, int y);
+
+	void getPosition(int &x, int &y);
+	void getSize(int &w, int &h);
 
 	int addLabel(Label *label);
 	//int addTextBox(TextBox *textBox);
@@ -40,19 +46,19 @@ public:
 	//int addRadioButton(RadioButton *radioButton);
 	//int addButton(Button *button);
 	//int addProgressBar(ProgressBar *progressBar);
-	int getWindow(Window *window);
+	int addWindow(Window *window);
 
-	Label *getLabel(const char id);
-	//TextBox *getTextBox(const char id);
-	//CheckBox *getCheckBox(const char id);
-	//RadioButton *getRadioButton(const char id);
+	Label *getLabel(const char *id);
+	//TextBox *getTextBox(const char *id);
+	//CheckBox *getCheckBox(const char *id);
+	//RadioButton *getRadioButton(const char *id);
 	//Button *getButton(const char id);
-	//ProgressBar *getProgressBar(const char id);
-	Window *getWindow(const char id);
+	//ProgressBar *getProgressBar(const char *id);
+	Window *getWindow(const char *id);
 
 private:
-	static int initNC();
-	static int closeNC();
+	static int initNC(Window *win);
+	static int closeNC(Window *win);
 
 	struct elements{
 		std::vector<std::shared_ptr<Label>> mLabels;
@@ -66,6 +72,8 @@ private:
 	elements mElements;
 
 	WINDOW *mWindow;
+	std::string mID;
+	int mX, mY, mW, mH;
 
 	static bool mNCInited;
 	static int mInstances;

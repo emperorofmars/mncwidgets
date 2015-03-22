@@ -23,26 +23,34 @@ namespace mncw{
 class Label{
 public:
 	Label(const char *id);
-	Label(const char *id, WINDOW *target);
+	Label(WINDOW *target, const char *id);
+	Label(const char *content, int colorF, int colorB, WINDOW *target, const char *id);
 	~Label();
 
-	int refresh();
-	int clear();
+	int refreshAll();
+	int clearAll();
 
 	int setTarget(WINDOW *target);
 	int setText(const char *text);
 	int setPosition(int x, int y);
 	int setMaxSize(int s);
+	int setVisible(bool visible);
 
 	std::string getText();
 	std::string getID();
-	void getPosition(int *x, int *y);
+	void getPosition(int &x, int &y);
 	int getMaxSize();
+	bool getVisible();
 
 	bool cmpID(std::string &id);
 
 private:
 	std::string mID;
+	std::string mContent;
+	int mX, mY;
+	int mColorF;
+	int mColorB;
+	bool mVisible;
 
 	WINDOW *mTarget;
 };
