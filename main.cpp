@@ -29,11 +29,16 @@ int main(){
 
 	win.setColor(1);
 
-	win.addLabel(new mncw::Label("label1", "MNCWIDGETS", 20, 3, 5));
+	win.addLabel(new mncw::Label("label1", "MNCWIDGETS", 20, 3));
 
 	win.addWindow(new mncw::Window("sub", 10, 6));
 	mncw::Window *tmp = win.getWindow("sub");
-	if(tmp != NULL) tmp->setColor(2);
+	if(tmp != NULL){
+		tmp->setColor(2);
+		mncw::Label *tmpLabel = new mncw::Label("label2", "inner label", 1, 1);
+		tmpLabel->setColor(1);
+		tmp->addLabel(tmpLabel);
+	}
 	else LOG_F_ERROR(MNCW_LOG_FILE, "GET WINDOW RETURNED NULL");
 
 	win.refreshAll();

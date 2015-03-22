@@ -63,8 +63,6 @@ private:
 	static int initNC(Window *win);
 	static int closeNC(Window *win);
 
-	int updateAll();
-
 	struct elements{
 		std::vector<std::shared_ptr<Label>> mLabels;
 		//std::vector<std::shared_ptr<TextBox>> mTextBox;

@@ -42,14 +42,12 @@ int Label::updateAll(){
 	if(!mTarget){
 		return -1;
 	}
-	if(!mChanged || !mVisible){
+	if(!mChanged || !mVisible || mLen == 0){
 		return -1;
 	}
-	int tmpLen = mContent.size() - 1;
-	if(tmpLen <= 0){
-		return -1;
-	}
-	else if(tmpLen > mLen) tmpLen = mLen;
+	int tmpLen = mLen;
+	if(tmpLen < 0) tmpLen = mContent.size();
+	//else if(tmpLen > mLen) tmpLen = mContent.size() - 1;
 
 	if(has_colors()){
 		if(mColorPair > 0) color_set(mColorPair, 0);

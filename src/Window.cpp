@@ -39,10 +39,11 @@ Window::Window(const char *id, int x, int y, int h, int w, WINDOW *parent){
 		mW = w;
 		mH = h;
 	}
+	if(mWindow)	keypad(mWindow, TRUE);
 	mColorPair = 0;
 
 	mInstances++;
-	LOG_F_TRACE(MNCW_LOG_FILE, "Window created: ", mID);
+	LOG_F_TRACE(MNCW_LOG_FILE, "Window created: ", mID, " ptr: ", mWindow);
 }
 
 Window::~Window(){
@@ -67,22 +68,17 @@ Window::~Window(){
 }
 
 int Window::refreshAll(){
-	updateAll();
-	refresh();
-	return 0;
-}
-
-int Window::updateAll(){
 	if(!mWindow){
 		return -1;
 	}
 	wnoutrefresh(mWindow);
 	for(unsigned int i = 0; i < mElements.mWindows.size(); i++){
-		mElements.mWindows[i]->updateAll();
+		mElements.mWindows[i]->refreshAll();
 	}
 	for(unsigned int i = 0; i < mElements.mLabels.size(); i++){
 		mElements.mLabels[i]->updateAll();
 	}
+	wrefresh(mWindow);
 	return 0;
 }
 
@@ -167,6 +163,7 @@ int Window::addLabel(Label *label){
 		return -1;
 	}
 	label->setTarget(mWindow);
+	label->setColor(mColorPair);
 	mElements.mLabels.push_back(std::shared_ptr<Label>(label));
 	return 0;
 }
@@ -239,7 +236,6 @@ int Window::initNC(Window *win){
 		return -1;
 	}
 	cbreak();
-	keypad(win->mWindow, TRUE);
 	curs_set(0);
 	noecho();
 	if(has_colors()) start_color();
