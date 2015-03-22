@@ -29,9 +29,13 @@
 			</Target>
 		</Build>
 		<Compiler>
+			<Add option="-std=c++11" />
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Linker>
+			<Add option="-lncurses" />
+		</Linker>
 		<Unit filename="main.cpp" />
 		<Unit filename="src/Label.cpp" />
 		<Unit filename="src/Label.h" />
