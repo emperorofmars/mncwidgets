@@ -39,6 +39,8 @@
 		<Unit filename="main.cpp" />
 		<Unit filename="src/Label.cpp" />
 		<Unit filename="src/Label.h" />
+		<Unit filename="src/TextBox.cpp" />
+		<Unit filename="src/TextBox.h" />
 		<Unit filename="src/Window.cpp" />
 		<Unit filename="src/Window.h" />
 		<Unit filename="src/include.h" />

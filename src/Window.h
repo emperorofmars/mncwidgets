@@ -18,7 +18,7 @@
 
 #include "include.h"
 #include "Label.h"
-//#include "TextBox.h"
+#include "TextBox.h"
 //#include "CheckBox.h"
 //#include "RadioButton.h"
 //#include "Button.h"
@@ -43,7 +43,7 @@ public:
 	void getSize(int &h, int &w);
 
 	int addLabel(Label *label);
-	//int addTextBox(TextBox *textBox);
+	int addTextBox(TextBox *textBox);
 	//int addCheckBox(CheckBox *checkBox);
 	//int addRadioButton(RadioButton *radioButton);
 	//int addButton(Button *button);
@@ -51,7 +51,7 @@ public:
 	int addWindow(Window *window);
 
 	Label *getLabel(const char *id);
-	//TextBox *getTextBox(const char *id);
+	TextBox *getTextBox(const char *id);
 	//CheckBox *getCheckBox(const char *id);
 	//RadioButton *getRadioButton(const char *id);
 	//Button *getButton(const char id);
@@ -66,11 +66,11 @@ private:
 
 	struct elements{
 		std::vector<std::shared_ptr<Label>> mLabels;
-		//std::vector<std::shared_ptr<TextBox>> mTextBox;
-		//std::vector<std::shared_ptr<CheckBox>> mCheckBox;
-		//std::vector<std::shared_ptr<RadioButton>> mRadioButton;
-		//std::vector<std::shared_ptr<Button>> mButton;
-		//std::vector<std::shared_ptr<ProgressBar>> mProgressBar;
+		std::vector<std::shared_ptr<TextBox>> mTextBoxes;
+		//std::vector<std::shared_ptr<CheckBox>> mCheckBoxes;
+		//std::vector<std::shared_ptr<RadioButton>> mRadioButtons;
+		//std::vector<std::shared_ptr<Button>> mButtons;
+		//std::vector<std::shared_ptr<ProgressBar>> mProgressBars;
 		std::vector<std::shared_ptr<Window>> mWindows;
 	};
 	elements mElements;

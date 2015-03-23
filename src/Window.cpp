@@ -78,6 +78,9 @@ int Window::refreshAll(){
 	for(unsigned int i = 0; i < mElements.mLabels.size(); i++){
 		mElements.mLabels[i]->updateAll();
 	}
+	for(unsigned int i = 0; i < mElements.mTextBoxes.size(); i++){
+		mElements.mTextBoxes[i]->updateAll();
+	}
 	wrefresh(mWindow);
 	return 0;
 }
@@ -92,6 +95,9 @@ int Window::clearAll(){
 	}
 	for(unsigned int i = 0; i < mElements.mLabels.size(); i++){
 		mElements.mLabels[i]->clearAll();
+	}
+	for(unsigned int i = 0; i < mElements.mTextBoxes.size(); i++){
+		mElements.mTextBoxes[i]->clearAll();
 	}
 	return 0;
 }
@@ -182,7 +188,20 @@ int Window::addLabel(Label *label){
 	return 0;
 }
 
-//int Window::addTextBox(TextBox *textBox);
+int Window::addTextBox(TextBox *textBox){
+	if(!mWindow){
+		return -1;
+	}
+	if(!textBox){
+		LOG_F_WARNING(MNCW_LOG_FILE, "cannot add textBox: (textBox is null): ", mID);
+		return -1;
+	}
+	textBox->setTarget(mWindow);
+	textBox->setColor(mColorPair);
+	mElements.mTextBoxes.push_back(std::shared_ptr<TextBox>(textBox));
+	return 0;
+}
+
 //int Window::addCheckBox(CheckBox *checkBox);
 //int Window::addRadioButton(RadioButton *radioButton);
 //int Window::addButton(Button *button);
@@ -214,7 +233,16 @@ Label *Window::getLabel(const char *id){
 	return NULL;
 }
 
-//TextBox *Window::getTextBox(const char *id);
+TextBox *Window::getTextBox(const char *id){
+	if(!mWindow){
+		return NULL;
+	}
+	for(unsigned int i = 0; i < mElements.mTextBoxes.size(); i++){
+		if(mElements.mTextBoxes[i] && mElements.mTextBoxes[i]->cmpID(id)) return mElements.mTextBoxes[i].get();
+	}
+	return NULL;
+}
+
 //CheckBox *Window::getCheckBox(const char *id);
 //RadioButton *Window::getRadioButton(const char *id);
 //Button *Window::getButton(const char id);

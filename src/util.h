@@ -13,8 +13,8 @@
 **	Project:	mNCWidgets
 */
 
-#ifndef UTIL_H
-#define UTIL_H
+#ifndef MNCW_UTIL_H
+#define MNCW_UTIL_H
 
 #include "include.h"
 
@@ -24,5 +24,5 @@ int enableColor();
 
 } // mncw
 
-#endif // UTIL_H
+#endif // MNCW_UTIL_H
 

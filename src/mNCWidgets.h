@@ -19,6 +19,7 @@
 #include "util.h"
 #include "Window.h"
 #include "Label.h"
+#include "TextBox.h"
 
 namespace mncw{
 

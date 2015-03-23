@@ -39,10 +39,32 @@ int main(){
 		mncw::Label *tmpLabel = new mncw::Label("label2", "inner label", 1, 1);
 		tmpLabel->setColor(1);
 		tmp->addLabel(tmpLabel);
+		mncw::TextBox *tmpTB = new mncw::TextBox("textBox1", "stuff:", 2, 3);
+		tmp->addTextBox(tmpTB);
+		tmpTB->setText("penis");
 	}
 	else LOG_F_ERROR(MNCW_LOG_FILE, "GET WINDOW RETURNED NULL");
 
 	win.refreshAll();
-	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+	std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+
+	if(tmp != NULL){
+		tmp->getTextBox("textBox1")->setSelected(true);
+	}
+
+	win.refreshAll();
+	std::this_thread::sleep_for(std::chrono::milliseconds(2000));
 	return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+

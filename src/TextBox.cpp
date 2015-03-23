@@ -9,36 +9,37 @@
 
 /*
 **	Author:		Martin Schwarz
-**	Name:		Label.cpp
+**	Name:		TextBox.cpp
 **	Project:	mNCWidgets
 */
 
-#include "Label.h"
+#include "TextBox.h"
 
 namespace mncw{
 
-Label::Label(const char *id, const char *content, int x, int y, int len){
+TextBox::TextBox(const char *id, const char *info, int x, int y, int contentLen){
 	if(!id){
 		return;
 	}
 	mID = id;
-	if(content){
-		mContent = content;
+	if(info){
+		mInfo = info;
 	}
 	mX = x;
 	mY = y;
-	mLen = len;
+	mLen = contentLen;
 	mColorPair = 0;
 	mChanged = true;
 	mVisible = true;
+	mSelected = false;
 
-	LOG_F_TRACE(MNCW_LOG_FILE, "Label created: ", mID, " len: ", mLen, " content: ", mContent);
+	LOG_F_TRACE(MNCW_LOG_FILE, "TextBox created: ", mID, " len: ", mLen, " info: ", mInfo);
 }
 
-Label::~Label(){
+TextBox::~TextBox(){
 }
 
-int Label::updateAll(){
+int TextBox::updateAll(){
 	if(!mTarget){
 		return -1;
 	}
@@ -47,16 +48,33 @@ int Label::updateAll(){
 	}
 	int tmpLen = mLen;
 	if(tmpLen < 0) tmpLen = mContent.size();
+
 	if(has_colors()){
 		if(mColorPair > 0) color_set(mColorPair, 0);
 	}
-	if(mContent.size() > 0) mvwaddstr(mTarget, mY, mX, mContent.substr(0, tmpLen).c_str());
+	int tmpPos = mX;
+	if(mInfo.size() > 0){
+		mvwaddstr(mTarget, mY, mX, mInfo.c_str());
+		tmpPos += mInfo.size();
+	}
+
+	if(mSelected) mvwaddstr(mTarget, mY, tmpPos, "<[");
+	else mvwaddstr(mTarget, mY, tmpPos, " [");
+	tmpPos += 2;
+
+	if(mContent.size() > 0){
+		mvwaddstr(mTarget, mY, tmpPos, mContent.c_str());
+		tmpPos += mContent.size();
+	}
+
+	if(mSelected) mvwaddstr(mTarget, mY, tmpPos, "]>");
+	else mvwaddstr(mTarget, mY, tmpPos, "] ");
 
 	mChanged = false;
 	return 0;
 }
 
-int Label::clearAll(){
+int TextBox::clearAll(){
 	if(!mTarget){
 		return -1;
 	}
@@ -65,7 +83,7 @@ int Label::clearAll(){
 	return 0;
 }
 
-int Label::setTarget(WINDOW *target){
+int TextBox::setTarget(WINDOW *target){
 	if(!mTarget){
 		return -1;
 	}
@@ -74,7 +92,16 @@ int Label::setTarget(WINDOW *target){
 	return 0;
 }
 
-int Label::setText(const char *text){
+int TextBox::setInfo(const char *text){
+	if(!mTarget){
+		return -1;
+	}
+	mInfo = text;
+	mChanged = true;
+	return 0;
+}
+
+int TextBox::setText(const char *text){
 	if(!mTarget){
 		return -1;
 	}
@@ -83,26 +110,26 @@ int Label::setText(const char *text){
 	return 0;
 }
 
-int Label::setPosition(int x, int y){
+int TextBox::setPosition(int x, int y){
 	mX = x;
 	mY = y;
 	mChanged = true;
 	return 0;
 }
 
-int Label::setMaxSize(int s){
+int TextBox::setSize(int s){
 	mLen = s;
 	mChanged = true;
 	return 0;
 }
 
-int Label::setColor(int colorPair){
+int TextBox::setColor(int colorPair){
 	mColorPair = colorPair;
 	mChanged = true;
 	return 0;
 }
 
-int Label::setVisible(bool visible){
+int TextBox::setVisible(bool visible){
 	if(mVisible && !visible){
 		clearAll();
 	}
@@ -113,29 +140,39 @@ int Label::setVisible(bool visible){
 	return 0;
 }
 
-std::string Label::getText(){
+int TextBox::setSelected(bool selected){
+	mSelected = selected;
+	mChanged = true;
+	return 0;
+}
+
+std::string TextBox::getContent(){
 	return mContent;
 }
 
-std::string Label::getID(){
+std::string TextBox::getID(){
 	return mID;
 }
 
-void Label::getPosition(int &x, int &y){
+void TextBox::getPosition(int &x, int &y){
 	x = mX;
 	y = mY;
 	return;
 }
 
-int Label::getMaxSize(){
+int TextBox::getMaxSize(){
 	return mLen;
 }
 
-bool Label::getVisible(){
+bool TextBox::getVisible(){
 	return mVisible;
 }
 
-bool Label::cmpID(const char *id){
+bool TextBox::getSelected(){
+	return mSelected;
+}
+
+bool TextBox::cmpID(const char *id){
 	if(!id) return false;
 	if(std::string(id) == mID) return true;
 	return false;
