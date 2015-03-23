@@ -36,10 +36,11 @@ public:
 
 	int setPosition(int x, int y);
 	int setSize(int h, int w);
+	int setColor(int colorPair);
+	int setBorder(bool enable);
 
 	void getPosition(int &x, int &y);
 	void getSize(int &h, int &w);
-	int setColor(int colorPair);
 
 	int addLabel(Label *label);
 	//int addTextBox(TextBox *textBox);

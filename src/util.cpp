@@ -9,20 +9,32 @@
 
 /*
 **	Author:		Martin Schwarz
-**	Name:		mNCWidgets.h
+**	Name:		util.cpp
 **	Project:	mNCWidgets
 */
 
-#ifndef MNCWIDGETS_H
-#define MNCWIDGETS_H
-
 #include "util.h"
-#include "Window.h"
-#include "Label.h"
 
 namespace mncw{
 
+int enableColor(){
+	if(!isendwin()){
+		if(has_colors()){
+			start_color();
+			LOG_F_TRACE(MNCW_LOG_FILE, "Colors enabled!");
+			return 0;
+		}
+		else{
+			LOG_F_INFO(MNCW_LOG_FILE, "Colors not supported!");
+			return -1;
+		}
+	}
+	else LOG_F_WARNING(MNCW_LOG_FILE, "ncurses not inited");
+	return -1;
+}
 
 } // mncw
 
-#endif // MNCWIDGETS_H
+
+
+

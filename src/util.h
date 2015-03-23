@@ -9,20 +9,20 @@
 
 /*
 **	Author:		Martin Schwarz
-**	Name:		mNCWidgets.h
+**	Name:		util.h
 **	Project:	mNCWidgets
 */
 
-#ifndef MNCWIDGETS_H
-#define MNCWIDGETS_H
+#ifndef UTIL_H
+#define UTIL_H
 
-#include "util.h"
-#include "Window.h"
-#include "Label.h"
+#include "include.h"
 
 namespace mncw{
 
+int enableColor();
 
 } // mncw
 
-#endif // MNCWIDGETS_H
+#endif // UTIL_H
+

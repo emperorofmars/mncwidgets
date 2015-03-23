@@ -43,6 +43,8 @@
 		<Unit filename="src/Window.h" />
 		<Unit filename="src/include.h" />
 		<Unit filename="src/mNCWidgets.h" />
+		<Unit filename="src/util.cpp" />
+		<Unit filename="src/util.h" />
 		<Extensions>
 			<envvars />
 			<code_completion />

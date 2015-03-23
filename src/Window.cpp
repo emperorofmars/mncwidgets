@@ -142,6 +142,20 @@ int Window::setColor(int colorPair){
 	return 0;
 }
 
+int Window::setBorder(bool enable){
+	if(!mWindow){
+		return -1;
+	}
+	if(enable){
+		wborder(mWindow, ACS_VLINE, ACS_VLINE, ACS_HLINE, ACS_HLINE,
+				ACS_ULCORNER, ACS_URCORNER, ACS_LLCORNER, ACS_LRCORNER);
+	}
+	else{
+		wborder(mWindow, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
+	}
+	return 0;
+}
+
 void Window::getPosition(int &x, int &y){
 	x = mX;
 	y = mY;
@@ -238,8 +252,8 @@ int Window::initNC(Window *win){
 	cbreak();
 	curs_set(0);
 	noecho();
-	if(has_colors()) start_color();
-	else LOG_F_INFO(MNCW_LOG_FILE, "Colors not supported!");
+	//if(has_colors()) start_color();
+	//else LOG_F_INFO(MNCW_LOG_FILE, "Colors not supported!");
 	clear();
 
 	mNCInited = true;

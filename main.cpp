@@ -22,10 +22,11 @@ int main(){
 	LOG_INIT("log.txt", false);
 
 	mncw::Window win("root");
+	mncw::enableColor();
 	win.setSize(5, 5);
 
 	init_pair(1, COLOR_WHITE, COLOR_BLUE);
-	init_pair(2, COLOR_BLACK, COLOR_WHITE);
+	init_pair(2, COLOR_WHITE, COLOR_BLACK);
 
 	win.setColor(1);
 
