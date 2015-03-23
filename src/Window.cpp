@@ -41,6 +41,7 @@ Window::Window(const char *id, int x, int y, int h, int w, WINDOW *parent){
 	}
 	if(mWindow)	keypad(mWindow, TRUE);
 	mColorPair = 0;
+	mSelected = false;
 
 	mInstances++;
 	LOG_F_TRACE(MNCW_LOG_FILE, "Window created: ", mID, " ptr: ", mWindow);
@@ -162,6 +163,11 @@ int Window::setBorder(bool enable){
 	return 0;
 }
 
+int Window::setSelected(bool selected){
+	mSelected = selected;
+	return 0;
+}
+
 void Window::getPosition(int &x, int &y){
 	x = mX;
 	y = mY;
@@ -172,6 +178,10 @@ void Window::getSize(int &h, int &w){
 	h = mH;
 	w = mW;
 	return;
+}
+
+bool Window::getSelected(){
+	return mSelected;
 }
 
 int Window::addLabel(Label *label){

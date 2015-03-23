@@ -38,9 +38,11 @@ public:
 	int setSize(int h, int w);
 	int setColor(int colorPair);
 	int setBorder(bool enable);
+	int setSelected(bool selected);
 
 	void getPosition(int &x, int &y);
 	void getSize(int &h, int &w);
+	bool getSelected();
 
 	int addLabel(Label *label);
 	int addTextBox(TextBox *textBox);
@@ -65,6 +67,8 @@ private:
 	static int closeNC(Window *win);
 
 	struct elements{
+		int mCur;
+
 		std::vector<std::shared_ptr<Label>> mLabels;
 		std::vector<std::shared_ptr<TextBox>> mTextBoxes;
 		//std::vector<std::shared_ptr<CheckBox>> mCheckBoxes;
@@ -79,6 +83,8 @@ private:
 	std::string mID;
 	int mX, mY, mW, mH;
 	int mColorPair;
+
+	bool mSelected;
 
 	static bool mNCInited;
 	static int mInstances;
